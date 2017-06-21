@@ -29,7 +29,7 @@ LABEL io.k8s.description="Fluentd container for collecting logs from other fluen
 # iproute needed for ip command to get ip addresses
 # nss_wrapper used to support username identity
 # bc for calculations in run.conf
-RUN yum install -y --enablerepo=rhel-server-rhscl-7-rpms --enablerepo=rhel-7-server-optional-rpms --setopt=tsflags=nodocs \
+RUN yum install -y --disablerepo=\* --enablerepo=rhel-7-server-rpms --enablerepo=rhel-server-rhscl-7-rpms --enablerepo=rhel-7-server-optional-rpms --setopt=tsflags=nodocs \
       gcc-c++ \
       ruby \
       ruby-devel \
