@@ -1,0 +1,32 @@
+<source>
+  @type secure_forward
+  self_hostname "#{ENV['HOSTNAME']}"
+  bind 0.0.0.0
+  port 24284
+
+  shared_key ${SHARED_KEY}
+
+  secure           ${IS_SECURE}
+  enable_strict_verification ${STRICT_VERIFICATION}
+
+  ca_cert_path     ${CA_PATH}
+  cert_path        ${CERT_PATH}
+  private_key_path ${KEY_PATH}
+
+  private_key_passphrase ${KEY_PASSPHRASE}
+</source>
+
+<filter **>
+  @type record_transformer
+  <record>
+    forwarded_by "#{ENV['HOSTNAME']}"
+    source_component "OCP"
+  </record>
+</filter>
+
+<match **>
+  type ${TARGET_TYPE}
+  host ${TARGET_HOST}
+  port ${TARGET_PORT}
+  ${ADDITIONAL_OPTS}
+</match>
