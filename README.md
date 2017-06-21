@@ -92,7 +92,7 @@ data:
     @type secure_forward
  
     self_hostname ${HOSTNAME}
-    shared_key newsharedkey
+    shared_key changeme 
  
     secure yes
     enable_strict_verification yes
