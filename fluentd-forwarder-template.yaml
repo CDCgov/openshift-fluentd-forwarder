@@ -46,8 +46,8 @@ objects:
           - mountPath: /secrets
             name: fluentd-forwarder-secret-mount
             readOnly: true
-          - mountPath: /tmp/fleuntd-config
-            name: fleuntd-forwarder-config
+          - mountPath: /tmp/fluentd-config
+            name: fluentd-forwarder-config
             readOnly: true
           name: fluentd-forwarder
           ports:
@@ -75,7 +75,7 @@ objects:
           secret:
             secretName: fluentd-forwarder-certs
             defaultMode: 420
-        - name: fleuntd-forwarder-config
+        - name: fluentd-forwarder-config
           configMap:
             name: fluentd-forwarder
             defaultMode: 420
