@@ -27,21 +27,21 @@ objects:
         containers:
         - name: fluentd-forwarder
           env:
-          - name: TAGET_TYPE
-            value: ${TARGET_TYPE}
+          - name: TARGET_TYPE
+            value: ${P_TARGET_TYPE}
           - name: TARGET_HOST
-            value: ${TARGET_HOST}
+            value: ${P_TARGET_HOST}
           - name: TARGET_PORT
-            value: ${TARGET_PORT}
+            value: ${P_TARGET_PORT}
           - name: CA_PATH
-            value: ${CA_PATH}
+            value: ${P_CA_PATH}
           - name: CERT_PATH
-            value: ${CERT_PATH}
+            value: ${P_CERT_PATH}
           - name: KEY_PATH
-            value: ${KEY_PATH}
+            value: ${P_KEY_PATH}
           - name: SHARED_KEY
-            value: ${SHARED_KEY}
-          image: ${IMAGE_LOCATION}/${IMAGE_NAME}:${IMAGE_VERSION}
+            value: ${P_SHARED_KEY}
+          image: ${P_IMAGE_LOCATION}/${P_IMAGE_NAME}:${P_IMAGE_VERSION}
           volumeMounts:
           - mountPath: /secrets
             name: fluentd-forwarder-secret-mount
@@ -141,39 +141,39 @@ objects:
         ${ADDITIONAL_OPTS}
       </match>
 parameters:
-  - name: IMAGE_LOCATION
+  - name: P_IMAGE_LOCATION
     description: The location where the image is stored including url, port, and namespace or project.
     required: true
     value: 172.30.91.145:5000/logging
-  - name: IMAGE_NAME
+  - name: P_IMAGE_NAME
     description: The name of the image to be used when performing the pull operation.
     value: fluentd-forwarder
     required: true
-  - name: IMAGE_VERSION
+  - name: P_IMAGE_VERSION
     description: The version of the fluentd-forwarder image to use.
     value: "1.0.0.0"
-  - name: TARGET_TYPE
+  - name: P_TARGET_TYPE
     description: The output target's type. Can be 'remote_syslog' or 'splunk_ex'.
     required: true 
     value: remote_syslog
-  - name: TARGET_HOST
+  - name: P_TARGET_HOST
     description: The remote host that is the target for the logging data.
     value: remote-syslog-host.lan
     required: true
-  - name: TARGET_PORT
+  - name: P_TARGET_PORT
     description: The remote port on the host that is the target for the logging data. The normal value for syslog is 514 and the normal value for splunk is 9997.
     required: true
     value: "514"
-  - name: SHARED_KEY
+  - name: P_SHARED_KEY
     description: "A key shared between the logging providers and this forwarder to ensure secure operation. Default: 'ocpaggregatedloggingsharedkey'."
     value: ocpaggregatedloggingsharedkey
     required: true
-  - name: CA_PATH
+  - name: P_CA_PATH
     description: Path to the CA certificate required for certificate verification. By default it uses the OCP master's signing certificate.
     value: /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
-  - name: CERT_PATH
+  - name: P_CERT_PATH
     description: Path to the certificate that should be used to identify the server. Defaults to the path outlined for secret mount.
     value: /secrets/tls.crt
-  - name: KEY_PATH
+  - name: P_KEY_PATH
     description: Path to the key that should be used for the server PKI. Defaults the the path outlined for secret mount.
     value: /secrets/tls.key
