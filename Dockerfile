@@ -1,5 +1,5 @@
 # start based on a centos image
-FROM centos:7
+FROM rhel7
 
 ENV HOME=/opt/app-root/src \
   PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH \
@@ -29,9 +29,7 @@ LABEL io.k8s.description="Fluentd container for collecting logs from other fluen
 # iproute needed for ip command to get ip addresses
 # nss_wrapper used to support username identity
 # bc for calculations in run.conf
-RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
-    yum install -y epel-release && \
-    yum install -y --setopt=tsflags=nodocs \
+RUN yum install -y --disablerepo=\* --enablerepo=rhel-7-server-rpms --enablerepo=rhel-server-rhscl-7-rpms --enablerepo=rhel-7-server-optional-rpms --setopt=tsflags=nodocs \
       gcc-c++ \
       ruby \
       ruby-devel \
@@ -66,7 +64,7 @@ RUN mkdir -p /etc/fluent && \
     chgrp -R 0 /secrets && \
     chmod -R g+rwX /secrets  && \
     chgrp -R 0 /var/log && \
-    chmod -R g+rwX /var/log   
+    chmod -R g+rwX /var/log     
 
 # copy configuration files
 ADD run.sh fluentd.conf.template passwd.template fluentd-check.sh ${HOME}/
