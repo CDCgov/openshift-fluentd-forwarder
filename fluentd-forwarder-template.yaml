@@ -27,7 +27,7 @@ objects:
         containers:
         - name: fluentd-forwarder
           env:
-          - name: TAGET_TYPE
+          - name: TARGET_TYPE
             value: ${TARGET_TYPE}
           - name: TARGET_HOST
             value: ${TARGET_HOST}
