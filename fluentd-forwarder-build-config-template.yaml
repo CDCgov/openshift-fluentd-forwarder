@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: fluentd-forwarder
+  annotations:
+    description: Build Config template for collecting and forwarding fluentd logs to a remote log collection point like rsyslog or splunk.
+labels:
+  name: fluentd-forwarder
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: rhel7
+    labels:
+      app: fluentd-forwarder
+  spec:
+    tags:
+      - name: latest
+        annotations:
+          openshift.io/imported-from: registry.access.redhat.com/rhel7/rhel
+        from:
+          kind: DockerImage
+          name: registry.access.redhat.com/rhel7/rhel
+        referencePolicy:
+          type: Source
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: fluentd-forwarder
+    labels:
+      app: fluentd-forwarder
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: ${IMAGE_NAME}
+    labels:
+      app: ${IMAGE_NAME}
+  spec:
+    runPolicy: Serial
+    source:
+      type: Git
+      git:
+        uri: ${GIT_URI}
+    strategy:
+      type: Docker
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: 'rhel7:latest'
+    output:
+      to:
+        kind: ImageStreamTag
+        name: '${IMAGE_NAME}:latest'
+parameters:
+  - name: GIT_URI
+    description: The Git URI.
+    required: true
+  - name: IMAGE_NAME
+    description: The name of the image to be used when performing the pull operation.
+    value: fluentd-forwarder
+    required: true
