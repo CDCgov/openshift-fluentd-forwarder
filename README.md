@@ -23,7 +23,7 @@
 * [Records](#records)
 
 ## Overview
-OpenShift can be configured to host an EFK stack that stores and indexes log data but at some sites a log aggregation system is already in place. A forwarding fluentd can be configured to forward log data to a remote collection point.
+OpenShift can be configured to host an EFK stack that stores and indexes log data but at some sites a log aggregation system is already in place. A forwarding fluentd can be configured to forward log data to a remote collection point. Using a containerized version that runs within OCP both simplifies some of the infrastructure and certificate management and allows rapid deployment with resiliancy.
 
 ## Public Domain
 This project constitutes a work of the United States Government and is not
