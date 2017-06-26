@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: fluentd-forwarder-bc
+  name: fluentd-forwarder-build
   annotations:
     description: Build Config template for collecting and forwarding fluentd logs to a remote log collection point like rsyslog or splunk.
 labels:
