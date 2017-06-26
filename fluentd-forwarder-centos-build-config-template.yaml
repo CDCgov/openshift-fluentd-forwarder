@@ -11,7 +11,7 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: rhel7
+    name: centos
     namespace: ${NAMESPACE}
     labels:
       app: fluentd-forwarder
@@ -19,10 +19,10 @@ objects:
     tags:
       - name: latest
         annotations:
-          openshift.io/imported-from: registry.access.redhat.com/rhel7/rhel
+          openshift.io/imported-from: docker.io/centos/7
         from:
           kind: DockerImage
-          name: registry.access.redhat.com/rhel7/rhel
+          name: docker.io/centos/7
         referencePolicy:
           type: Source
 - apiVersion: v1
@@ -51,7 +51,8 @@ objects:
       dockerStrategy:
         from:
           kind: ImageStreamTag
-          name: 'rhel7:latest'
+          name: 'centos:latest'
+        dockerfilePath: Dockerfile.centos
     output:
       to:
         kind: ImageStreamTag

@@ -14,7 +14,7 @@ objects:
     labels:
       name: fluentd-forwarder
     name: fluentd-forwarder
-    namespace: logging
+    namespace: ${P_NAMESPACE}
   spec:
     replicas: 1
     selector:
@@ -41,7 +41,7 @@ objects:
             value: ${P_KEY_PATH}
           - name: SHARED_KEY
             value: ${P_SHARED_KEY}
-          image: ${P_IMAGE_LOCATION}/${P_IMAGE_NAME}:${P_IMAGE_VERSION}
+          image: ${P_NAMESPACE}/${P_IMAGE_NAME}:${P_IMAGE_VERSION}
           volumeMounts:
           - mountPath: /secrets
             name: fluentd-forwarder-secret-mount
@@ -89,7 +89,7 @@ objects:
     labels:
       name: fluentd-forwarder
     name: fluentd-forwarder
-    namespace: logging
+    namespace: ${P_NAMESPACE}
   spec:
     ports:
     - name: fluentd-forwarder
@@ -105,7 +105,7 @@ objects:
     labels:
       name: fluentd-forwarder
     name: fluentd-forwarder
-    namespace: logging
+    namespace: ${P_NAMESPACE}
   data:
     fluentd.conf: |
       <source>
@@ -141,10 +141,10 @@ objects:
         ${ADDITIONAL_OPTS}
       </match>
 parameters:
-  - name: P_IMAGE_LOCATION
-    description: The location where the image is stored including url, port, and namespace or project.
+  - name: P_NAMESPACE
+    description: Target namespace for components
+    value: logging
     required: true
-    value: 172.30.91.145:5000/logging
   - name: P_IMAGE_NAME
     description: The name of the image to be used when performing the pull operation.
     value: fluentd-forwarder
