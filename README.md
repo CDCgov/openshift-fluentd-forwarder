@@ -111,13 +111,13 @@ oc process fluentd-forwarder-centos | oc apply -f -
 Build the fluentd-forwarder
 ```bash
 oc project logging
-oc build fluentd-forwarder
+oc start-build fluentd-forwarder
 ```
 
 To build with CentOS use the -centos build configuration.
 ```bash
 oc project logging
-oc build fluentd-forwarder-centos
+oc start-build fluentd-forwarder-centos
 ```
 
 ### Create Fluentd Forwarder
