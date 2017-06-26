@@ -98,12 +98,26 @@ oc apply -f fluentd-forwarder-centos-build-config-template.yaml
 
 Process the template to create a build, using any relevant variables. In the general case the defaults are fine.
 ```bash
+oc project logging
 oc process fluentd-forwarder | oc apply -f -
 ```
 
 For CentOS process the -centos template.
 ```bash
+oc project logging
 oc process fluentd-forwarder-centos | oc apply -f -
+```
+
+Build the fluentd-forwarder
+```bash
+oc project logging
+oc build fluentd-forwarder
+```
+
+To build with CentOS use the -centos build configuration.
+```bash
+oc project logging
+oc build fluentd-forwarder-centos
 ```
 
 ### Create Fluentd Forwarder
