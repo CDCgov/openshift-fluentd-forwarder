@@ -9,11 +9,10 @@
     * [Environment Specifications](#environment-specifications)
     * [Template Files](#template-files)
     * [Config Files](#config-files)
-    * [External Source Code Repositories](#external-source-code-repositories)
 * [Setup Instructions](#setup-instructions)
 * [Presenter Notes](#presenter-notes)
     * [Environment Setup](#environment-setup)
-    * [Produce Image](#produce-image)
+    * [Create Build Configuration](#create-build-configuration)
     * [Create Fluentd Forwarder](#create-fluentd-forwarder)
     * [Configure Fluentd Loggers](#configure-fluentd-loggers)
     * [Additional Configuration](#additional-configuration)
@@ -24,7 +23,7 @@
 * [Records](#records)
 
 ## Overview
-OpenShift can be configured to host an EFK stack that stores and indexes log data but at some sites a log aggregation system is already in place. A forwarding fluentd can be configured to forward log data to a remote collection point.
+OpenShift can be configured to host an EFK stack that stores and indexes log data but at some sites a log aggregation system is already in place. A forwarding fluentd can be configured to forward log data to a remote collection point. Using a containerized version that runs within OCP both simplifies some of the infrastructure and certificate management and allows rapid deployment with resiliancy.
 
 ## Public Domain
 This project constitutes a work of the United States Government and is not
@@ -65,49 +64,89 @@ This quickstart should be run on an installation of OpenShift Enterprise V3 with
 
 ### Template Files
 
-* [Application Template](./fluentd-forwarder-template.yaml)
+* Build Configurations
+  * [RHEL](./fluentd-forwarder-build-config-template.yaml)
+  * [CentOS](./fluentd-forwarder-centos-config-template.yaml)
+* [Application Deployment Template](./fluentd-forwarder-template.yaml)
 
 ### Config Files
 
-None
-
-### External Source Code Repositories
-
-None
+* [Fluentd Forwarding Configuration](./fluentd.conf.template)
+  * Echoed in [ConfigMap section in Application Template](./fluentd-forwarder-template.yaml)
 
 ## Setup Instructions
 
-Build the docker image in the [Dockerfile](./Dockerfile) and push to a repository that can be accessed by your OpenShift instance. Add the [template](./fluentd-forwarder-template.yaml) to the "logging" namespace.
-
-## Presenter Notes
+Have the `[fluentd-forwarder-build-config-template](./fluentd-forwarder-build-config-template.yaml)` and the `[fluentd-forwarder-template](./fluentd-forwarder-template.yaml)` available for adding to the cluster. These templates will be needed for creating builds and deploying the application.
 
 ### Environment Setup
 
 The EFK stack should already be configured in the "logging" namespace.
 
-### Produce Image
+### Create Build Configuration
 
-To produce the image use the `docker build` command on the [Dockerfile](./Dockerfile) provided in this repository. Make the image available to the OpenShift instance and tagged with a version. (Usually the version is the version of fluentd in use.)
+Choose the RHEL (default) or CentOS (-centos) flavor of build configuration. Add the build configuration template to the logging namespace.
+```bash
+oc project logging
+oc apply -f fluentd-forwarder-build-config-template.yaml
+```
 
-This project provides both a CentOS 7 and RHEL 7 image. The RHEL 7 is subject to the requirements of subscriptions for the RHEL 7 optional and software collection repositories.
+For CentOS use the -centos template.
+```bash
+oc project logging
+oc apply -f fluentd-forwarder-centos-build-config-template.yaml
+```
+
+Process the template to create a build, using any relevant variables. In the general case the defaults are fine.
+```bash
+oc project logging
+oc process fluentd-forwarder | oc apply -f -
+```
+
+For CentOS process the -centos template.
+```bash
+oc project logging
+oc process fluentd-forwarder-centos | oc apply -f -
+```
+
+Build the fluentd-forwarder
+```bash
+oc project logging
+oc build fluentd-forwarder
+```
+
+To build with CentOS use the -centos build configuration.
+```bash
+oc project logging
+oc build fluentd-forwarder-centos
+```
 
 ### Create Fluentd Forwarder
 
 Add the template to the logging namespace:
 ```bash
-oc apply -n logging -f fluentd-forwarder-template.yaml
+oc project logging
+oc apply -f fluentd-forwarder-template.yaml
 ```
 
-Create the new logging forwarder:
+Create the new logging forwarder application deployment:
 ```bash
 oc project logging
 oc new-app fluentd-forwarder \
-   -p "IMAGE_LOCATION=<registry cluster ip and namespace, ex: 172.30.12.40:5000/logging>" \
-   -p "IMAGE_VERSION=<version pushed, ex: 0.12.32>" \
-   -p "TARGET_TYPE=remote_syslog" \
-   -p "TARGET_HOST=rsyslog.internal.company.com" \
-   -p "TARGET_PORT=514" \
-   -p "SHARED_KEY=changeme"
+   -p "P_TARGET_TYPE=remote_syslog" \
+   -p "P_TARGET_HOST=rsyslog.internal.company.com" \
+   -p "P_TARGET_PORT=514" \
+   -p "P_SHARED_KEY=changeme"
+```
+
+To do the same for CentOS you need to reference the ImageStream created by that build.
+```bash
+oc project logging
+oc new-app fluentd-forwarder \
+   -p "P_IMAGE_NAME=fluentd-forwarder-centos"
+   -p "P_TARGET_TYPE=remote_syslog" \
+   -p "P_TARGET_HOST=rsyslog.internal.company.com" \
+   -p "P_TARGET_PORT=514" \
+   -p "P_SHARED_KEY=changeme"
 ```
 
 A full list of parameters can be found in the [template](./fluentd-forwarder-template.yaml). Additional non-parameterized parameters and environment variables can be found in the [Dockerfile](./Dockerfile).
@@ -220,6 +259,7 @@ oc logs fluentd-forwarder-1-a3zdf
 
 ## Resources
 * [Secure Forwarding with Splunk](https://playbooks-rhtconsulting.rhcloud.com/playbooks/operationalizing/secure-forward-splunk.html)
+* [Origin Fluentd Image Source](https://github.com/openshift/origin-aggregated-logging/blob/master/fluentd/Dockerfile)
 
 ## Privacy
 This project contains only non-sensitive, publicly available data and
