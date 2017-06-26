@@ -14,7 +14,6 @@ objects:
     labels:
       name: fluentd-forwarder
     name: fluentd-forwarder
-    namespace: ${P_NAMESPACE}
   spec:
     replicas: 1
     selector:
@@ -89,7 +88,6 @@ objects:
     labels:
       name: fluentd-forwarder
     name: fluentd-forwarder
-    namespace: ${P_NAMESPACE}
   spec:
     ports:
     - name: fluentd-forwarder
@@ -105,7 +103,6 @@ objects:
     labels:
       name: fluentd-forwarder
     name: fluentd-forwarder
-    namespace: ${P_NAMESPACE}
   data:
     fluentd.conf: |
       <source>
@@ -142,7 +139,7 @@ objects:
       </match>
 parameters:
   - name: P_NAMESPACE
-    description: Target namespace for components
+    description: Target namespace for components.
     value: logging
     required: true
   - name: P_IMAGE_NAME

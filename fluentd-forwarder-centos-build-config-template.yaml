@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: fluentd-forwarder
+  name: fluentd-forwarder-centos
   annotations:
     description: Build Config template for collecting and forwarding fluentd logs to a remote log collection point like rsyslog or splunk.
 labels:
@@ -12,7 +12,6 @@ objects:
   kind: ImageStream
   metadata:
     name: centos
-    namespace: ${NAMESPACE}
     labels:
       app: fluentd-forwarder
   spec:
@@ -29,14 +28,12 @@ objects:
   kind: ImageStream
   metadata:
     name: ${IMAGE_NAME}
-    namespace: ${NAMESPACE}
     labels:
       app: fluentd-forwarder
 - apiVersion: v1
   kind: BuildConfig
   metadata:
     name: ${IMAGE_NAME}
-    namespace: ${NAMESPACE}
     labels:
       app: ${IMAGE_NAME}
   spec:
@@ -58,9 +55,6 @@ objects:
         kind: ImageStreamTag
         name: '${IMAGE_NAME}:latest'
 parameters:
-  - name: NAMESPACE
-    value: logging
-    required: true
   - name: GIT_URI
     description: The Git URI.
     value: "https://github.com/CDCgov/openshift-fluentd-forwarder.git"
@@ -71,5 +65,5 @@ parameters:
     required: true
   - name: IMAGE_NAME
     description: The name of the image to be used when performing the pull operation.
-    value: fluentd-forwarder
+    value: fluentd-forwarder-centos
     required: true

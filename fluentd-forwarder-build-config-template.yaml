@@ -12,7 +12,6 @@ objects:
   kind: ImageStream
   metadata:
     name: rhel7
-    namespace: ${NAMESPACE}
     labels:
       app: fluentd-forwarder
   spec:
@@ -29,14 +28,12 @@ objects:
   kind: ImageStream
   metadata:
     name: ${IMAGE_NAME}
-    namespace: ${NAMESPACE}
     labels:
       app: fluentd-forwarder
 - apiVersion: v1
   kind: BuildConfig
   metadata:
     name: ${IMAGE_NAME}
-    namespace: ${NAMESPACE}
     labels:
       app: ${IMAGE_NAME}
   spec:
@@ -57,9 +54,6 @@ objects:
         kind: ImageStreamTag
         name: '${IMAGE_NAME}:latest'
 parameters:
-  - name: NAMESPACE
-    value: logging
-    required: true
   - name: GIT_URI
     description: The Git URI.
     value: "https://github.com/CDCgov/openshift-fluentd-forwarder.git"
