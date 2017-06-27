@@ -16,15 +16,27 @@ objects:
     name: fluentd-forwarder
   spec:
     replicas: 1
+    triggers:
+    - type: ImageChange
+      imageChangeParams:
+        containerNames:
+          - fluentd-forwarder
+        from:
+          kind: ImageStreamTag
+          namespace: ${P_NAMESPACE}
+          name: ${P_IMAGE_NAME}:${P_IMAGE_VERSION}
+    - type: ConfigChange
     selector:
       name: fluentd-forwarder
     template:
       metadata:
         labels:
           name: fluentd-forwarder
+
       spec:
         containers:
         - name: fluentd-forwarder
+          image: ${P_NAMESPACE}/${P_IMAGE_NAME}:${P_IMAGE_VERSION}
           env:
           - name: TARGET_TYPE
             value: ${P_TARGET_TYPE}
@@ -40,7 +52,6 @@ objects:
             value: ${P_KEY_PATH}
           - name: SHARED_KEY
             value: ${P_SHARED_KEY}
-          image: ${P_NAMESPACE}/${P_IMAGE_NAME}:${P_IMAGE_VERSION}
           volumeMounts:
           - mountPath: /secrets
             name: fluentd-forwarder-secret-mount
@@ -78,8 +89,6 @@ objects:
           configMap:
             name: fluentd-forwarder
             defaultMode: 420
-    triggers:
-    - type: ConfigChange
 - apiVersion: v1
   kind: Service
   metadata:
@@ -151,7 +160,7 @@ parameters:
     value: "1.0.0.0"
   - name: P_TARGET_TYPE
     description: The output target's type. Can be 'remote_syslog' or 'splunk_ex'.
-    required: true 
+    required: true
     value: remote_syslog
   - name: P_TARGET_HOST
     description: The remote host that is the target for the logging data.
