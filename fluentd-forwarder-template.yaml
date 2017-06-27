@@ -156,7 +156,7 @@ parameters:
     required: true
   - name: P_IMAGE_VERSION
     description: The version of the fluentd-forwarder image to use.
-    value: "1.0.0.0"
+    value: "latest"
   - name: P_TARGET_TYPE
     description: The output target's type. Can be 'remote_syslog' or 'splunk_ex'.
     required: true
