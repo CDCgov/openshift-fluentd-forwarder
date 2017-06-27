@@ -32,7 +32,6 @@ objects:
       metadata:
         labels:
           name: fluentd-forwarder
-
       spec:
         containers:
         - name: fluentd-forwarder
@@ -148,7 +147,7 @@ objects:
       </match>
 parameters:
   - name: P_NAMESPACE
-    description: Target namespace for components.
+    description: Target namespace for image. Used to reference the ImageStream source for the image.
     value: logging
     required: true
   - name: P_IMAGE_NAME
@@ -157,7 +156,7 @@ parameters:
     required: true
   - name: P_IMAGE_VERSION
     description: The version of the fluentd-forwarder image to use.
-    value: "1.0.0.0"
+    value: "latest"
   - name: P_TARGET_TYPE
     description: The output target's type. Can be 'remote_syslog' or 'splunk_ex'.
     required: true
