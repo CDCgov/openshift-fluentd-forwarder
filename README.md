@@ -16,7 +16,7 @@
     * [Create Fluentd Forwarder](#create-fluentd-forwarder)
     * [Configure Fluentd Loggers](#configure-fluentd-loggers)
     * [Additional Configuration](#additional-configuration)
-      * [Filtering](#additional-configuration-filtering)
+      * [Filtering](#filtering)
     * [Validating the Application](#validating-the-application)
 * [Resources](#resources)
 * [Privacy](#privacy)
