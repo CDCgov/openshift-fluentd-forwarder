@@ -16,6 +16,7 @@
     * [Create Fluentd Forwarder](#create-fluentd-forwarder)
     * [Configure Fluentd Loggers](#configure-fluentd-loggers)
     * [Additional Configuration](#additional-configuration)
+      * [Filtering](#additional-configuration-filtering)
     * [Validating the Application](#validating-the-application)
 * [Resources](#resources)
 * [Privacy](#privacy)
@@ -164,15 +165,15 @@ Edit the following YAML:
 data:
   secure-forward.conf: |
     @type secure_forward
- 
+
     self_hostname ${HOSTNAME}
-    shared_key changeme 
- 
+    shared_key changeme
+
     secure yes
     enable_strict_verification yes
- 
+
     ca_cert_path /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
- 
+
     <server>
        host fluentd-forwarder.logging.svc.cluster.local
        port 24284
@@ -239,11 +240,66 @@ If you save changes to this configuration map you will need to delete the pods f
 oc delete pods -l name=fluentd-forwarder
 ```
 
+#### Filtering
+In some use cases it might be necessary to perform filtering at the external fluentd process.  This would be done to reduce the number or type of messages that are forwared.  
+
+Using the fluentd.conf file from above a new record will be added to the json message.  The record `kubernetes_namespace_name` will be set to the OpenShift namespace from where the messages originated.
+
+Using the appened records, a filter is applied to all messages.  Messages where `kubernetes_namespace_name` match the specified regex pattern `devnull|logging|default|openshift-infra|management-infra|openshift|kube-system` are dropped and not forwared on.
+
+```yaml
+data:
+  fluentd.conf: |
+    <source>
+      @type secure_forward
+      self_hostname "#{ENV['HOSTNAME']}"
+      bind 0.0.0.0
+      port 24284
+
+      shared_key ${SHARED_KEY}
+
+      secure           ${IS_SECURE}
+      enable_strict_verification ${STRICT_VERIFICATION}
+
+      ca_cert_path     ${CA_PATH}
+      cert_path        ${CERT_PATH}
+      private_key_path ${KEY_PATH}
+
+      private_key_passphrase ${KEY_PASSPHRASE}
+    </source>
+
+    <filter **>
+      @type record_transformer
+      enable_ruby yes
+      auto_typecast yes
+      <record>
+        #Create an additional record that contains the OCP namespace, if no namespace is set the message will be dropped.
+        kubernetes_namespace_name ${record["kubernetes"]["namespace_name"].nil? ? 'devnull' : record["kubernetes"]["namespace_name"]}
+        forwarded_by "#{ENV['HOSTNAME']}"
+        source_component "OCP"
+      </record>
+    </filter>
+
+    #Run filter on all messages, using the new records from above
+    <filter **>
+      @type grep
+      #Always filter out the system namespaces
+      exclude1 kubernetes_namespace_name (devnull|logging|default|openshift-infra|management-infra|openshift|kube-system)
+    </filter>
+
+    <match **>
+      type ${TARGET_TYPE}
+      host ${TARGET_HOST}
+      port ${TARGET_PORT}
+      ${ADDITIONAL_OPTS}
+    </match>
+```
+
 ### Validating the Application
 The best verification is that logs are showing up in the remote location. The application sets two tags "forwarded_by" which is set to the pod's hostname and "source_component" which is always set to "OCP". You can use those tags to search the logging collection facility for the logs being produced.
 
 If VERBOSE is set as an environment variable in the deployment config (`oc edit dc fluentd-forwarder`) then you can tail the logs of the fluentd-forwarder container and you should see a lot of information about reads. This is not the most reliable test but it will at least point in the right direction.
- 
+
 ```bash
 oc logs fluentd-forwarder-1-a3zdf
 2017-06-19 21:05:20 +0000 [debug]: plugin/input_session.rb:122:on_read: on_read
@@ -260,6 +316,7 @@ oc logs fluentd-forwarder-1-a3zdf
 ## Resources
 * [Secure Forwarding with Splunk](https://playbooks-rhtconsulting.rhcloud.com/playbooks/operationalizing/secure-forward-splunk.html)
 * [Origin Fluentd Image Source](https://github.com/openshift/origin-aggregated-logging/blob/master/fluentd/Dockerfile)
+* [Fluentd Filter Plugin Overview](http://docs.fluentd.org/v0.12/articles/filter-plugin-overview)
 
 ## Privacy
 This project contains only non-sensitive, publicly available data and
