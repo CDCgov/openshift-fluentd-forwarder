@@ -164,20 +164,22 @@ Edit the following YAML:
 ```yaml
 data:
   secure-forward.conf: |
-    @type secure_forward
+    <store>
+      @type secure_forward
 
-    self_hostname ${HOSTNAME}
-    shared_key changeme
+      self_hostname ${HOSTNAME}
+      shared_key changeme
 
-    secure yes
-    enable_strict_verification yes
+      secure yes
+      enable_strict_verification yes
 
-    ca_cert_path /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
+      ca_cert_path /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
 
-    <server>
-       host fluentd-forwarder.logging.svc.cluster.local
-       port 24284
-    </server>
+      <server>
+         host fluentd-forwarder.logging.svc.cluster.local
+         port 24284
+      </server>
+    </store>
 ```
 
 This will cause each individual fluentd logger to begin forwarding to the service address `fluentd-forwarder.logging.svc.cluster.local` which was created with the new-app command. That service has it's own cluster-generated certificates and the "ca_cert_path" value here is used to trust the cluster's service signer CA.
