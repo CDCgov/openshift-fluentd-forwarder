@@ -245,7 +245,7 @@ In some use cases it might be necessary to perform filtering at the external flu
 
 Using the fluentd.conf file from above a new record will be added to the json message.  The record `kubernetes_namespace_name` will be set to the OpenShift namespace from where the messages originated.
 
-Using the appened records, a filter is applied to all messages.  Messages where `kubernetes_namespace_name` match the specified regex pattern `devnull|logging|default|openshift-infra|management-infra|openshift|kube-system` are dropped and not forwared on.
+Using the appened records, a filter is applied to all messages.  Messages where `kubernetes_namespace_name` match the specified regex pattern `devnull|logging|default|openshift|openshift-infra|management-infra|kube-system|prometheus` are dropped and not forwared on.  
 
 ```yaml
 data:
@@ -268,32 +268,77 @@ data:
       private_key_passphrase ${KEY_PASSPHRASE}
     </source>
 
-    <filter **>
+    <filter kubernetes.**>
       @type record_transformer
       enable_ruby yes
       auto_typecast yes
       <record>
-        #Create an additional record that contains the OCP namespace, if no namespace is set the message will be dropped.
         kubernetes_namespace_name ${record["kubernetes"]["namespace_name"].nil? ? 'devnull' : record["kubernetes"]["namespace_name"]}
         forwarded_by "#{ENV['HOSTNAME']}"
         source_component "OCP"
       </record>
     </filter>
 
-    #Run filter on all messages, using the new records from above
-    <filter **>
+    #Run filter on kube messages
+    <filter kubernetes.**>
       @type grep
-      #Always filter out the system namespaces
-      exclude1 kubernetes_namespace_name (devnull|logging|default|openshift-infra|management-infra|openshift|kube-system)
+      #Always filter out the restricted namespaces
+      exclude1 kubernetes_namespace_name (devnull|logging|default|openshift|openshift-infra|management-infra|kube-system|prometheus)
     </filter>
 
-    <match **>
-      type ${TARGET_TYPE}
-      host ${TARGET_HOST}
-      port ${TARGET_PORT}
+    <match kubernetes.**>
+      @type ${TARGET_TYPE}
+      #host ${TARGET_HOST}
+      #port ${TARGET_PORT}
       ${ADDITIONAL_OPTS}
     </match>
+
+    #Toss the rest of the records.
+    <match **>
+      @type null
+    </match>
 ```
+
+All system level messages would be dropped in the example above.  To filter system messages filter on the `system.**` tag.  
+
+```yaml
+data:
+  fluentd.conf: |
+    <source>
+      @type secure_forward
+      self_hostname "#{ENV['HOSTNAME']}"
+      bind 0.0.0.0
+      port 24284
+
+      shared_key ${SHARED_KEY}
+
+      secure           ${IS_SECURE}
+      enable_strict_verification ${STRICT_VERIFICATION}
+
+      ca_cert_path     ${CA_PATH}
+      cert_path        ${CERT_PATH}
+      private_key_path ${KEY_PATH}
+
+      private_key_passphrase ${KEY_PASSPHRASE}
+    </source>
+
+    <filter system.**>
+      #Add system filtering logic here.
+    </filter>
+
+    <match system.**>
+      @type ${TARGET_TYPE}
+      #host ${TARGET_HOST}
+      #port ${TARGET_PORT}
+      ${ADDITIONAL_OPTS}
+    </match>
+
+    #Toss the rest of the records.
+    <match **>
+      @type null
+    </match>
+```
+
 
 ### Validating the Application
 The best verification is that logs are showing up in the remote location. The application sets two tags "forwarded_by" which is set to the pod's hostname and "source_component" which is always set to "OCP". You can use those tags to search the logging collection facility for the logs being produced.
