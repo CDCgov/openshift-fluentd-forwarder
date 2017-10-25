@@ -47,6 +47,7 @@ RUN mkdir -p ${HOME} && \
     gem install -N --conservative --minimal-deps --no-document \
       fluentd:${FLUENTD_VERSION} \
       'activesupport:<5' \
+      'public_suffix:<3.0.0' \
       fluent-plugin-kubernetes_metadata_filter \
       fluent-plugin-rewrite-tag-filter \
       fluent-plugin-secure-forward \
@@ -64,7 +65,7 @@ RUN mkdir -p /etc/fluent && \
     chgrp -R 0 /secrets && \
     chmod -R g+rwX /secrets  && \
     chgrp -R 0 /var/log && \
-    chmod -R g+rwX /var/log     
+    chmod -R g+rwX /var/log
 
 # copy configuration files
 ADD run.sh fluentd.conf.template passwd.template fluentd-check.sh ${HOME}/
