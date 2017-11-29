@@ -145,6 +145,20 @@ objects:
         port ${TARGET_PORT}
         ${ADDITIONAL_OPTS}
       </match>
+- apiVersion: extensions/v1beta1
+  kind: HorizontalPodAutoscaler
+  metadata:
+    name: fluentd-forwarder
+  spec:
+    scaleRef:
+      kind: DeploymentConfig
+      name: fluentd-forwarder
+      apiVersion: v1
+      subresource: scale
+    minReplicas: 1
+    maxReplicas: ${P_AUTOSCALE_MAX_PODS}
+    CPUUtilization:
+      targetPercentage: ${P_AUTOSCALE_TARGET_CPU}
 parameters:
   - name: P_NAMESPACE
     description: Target namespace for image. Used to reference the ImageStream source for the image.
@@ -182,3 +196,9 @@ parameters:
   - name: P_KEY_PATH
     description: Path to the key that should be used for the server PKI. Defaults the the path outlined for secret mount.
     value: /secrets/tls.key
+  - name: P_AUTOSCALE_MAX_PODS
+    description: Maximum number of pods that fluentd-forwarder should scale up to.
+    value: "4"
+  - name: P_AUTOSCALE_TARGET_CPU
+    description: Target CPU Utilization for the HPA.
+    value: "80"
