@@ -48,6 +48,8 @@ RUN mkdir -p ${HOME} && \
       fluentd:${FLUENTD_VERSION} \
       'activesupport:<5' \
       'public_suffix:<3.0.0' \
+      'fluent-plugin-record-modifier:<1.0.0' \
+      'fluent-plugin-rewrite-tag-filter:<2.0.0' \
       fluent-plugin-kubernetes_metadata_filter \
       fluent-plugin-rewrite-tag-filter \
       fluent-plugin-secure-forward \

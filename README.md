@@ -3,7 +3,7 @@
 ## Table of Contents
 
 * [Overview](#overview)
-* [Public Domain](#public-domain)
+* [Fork Notes](#fork-notes)
 * [License](#license)
 * [Bill of Materials](#bill-of-materials)
     * [Environment Specifications](#environment-specifications)
@@ -19,21 +19,13 @@
       * [Filtering](#filtering)
     * [Validating the Application](#validating-the-application)
 * [Resources](#resources)
-* [Privacy](#privacy)
-* [Contributing](#contributing)
-* [Records](#records)
+
 
 ## Overview
 OpenShift can be configured to host an EFK stack that stores and indexes log data but at some sites a log aggregation system is already in place. A forwarding fluentd can be configured to forward log data to a remote collection point. Using a containerized version that runs within OCP both simplifies some of the infrastructure and certificate management and allows rapid deployment with resiliancy.
 
-## Public Domain
-This project constitutes a work of the United States Government and is not
-subject to domestic copyright protection under 17 USC § 105. This project is in
-the public domain within the United States, and copyright and related rights in
-the work worldwide are waived through the [CC0 1.0 Universal public domain dedication](https://creativecommons.org/publicdomain/zero/1.0/).
-All contributions to this project will be released under the CC0 dedication. By
-submitting a pull request you are agreeing to comply with this waiver of
-copyright interest.
+## Fork Notes
+This project is now an official fork of (https://github.com/CDCgov/openshift-fluentd-forwarder) and no commits will be pushed to the upstream project.  This is due to the fact that it looks like the upstream project is no longer accepting pull requests.
 
 ## License
 The project utilizes code licensed under the terms of the Apache Software
@@ -49,13 +41,6 @@ PARTICULAR PURPOSE. See the Apache Software License for more details.
 
 You should have received a copy of the Apache Software License along with this
 program. If not, see http://www.apache.org/licenses/LICENSE-2.0.html
-
-## Privacy
-This project contains only non-sensitive, publicly available data and
-information. All material and community participation is covered by the
-Surveillance Platform [Disclaimer](https://github.com/CDCgov/template/blob/master/DISCLAIMER.md)
-and [Code of Conduct](https://github.com/CDCgov/template/blob/master/code-of-conduct.md).
-For more information about CDC's privacy policy, please visit [http://www.cdc.gov/privacy.html](http://www.cdc.gov/privacy.html).
 
 ## Bill of Materials
 
@@ -243,11 +228,11 @@ oc delete pods -l name=fluentd-forwarder
 ```
 
 #### Filtering
-In some use cases it might be necessary to perform filtering at the external fluentd process.  This would be done to reduce the number or type of messages that are forwared.  
+In some use cases it might be necessary to perform filtering at the external fluentd process.  This would be done to reduce the number or type of messages that are forwared.
 
 Using the fluentd.conf file from above a new record will be added to the json message.  The record `kubernetes_namespace_name` will be set to the OpenShift namespace from where the messages originated.
 
-Using the appened records, a filter is applied to all messages.  Messages where `kubernetes_namespace_name` match the specified regex pattern `devnull|logging|default|openshift|openshift-infra|management-infra|kube-system|prometheus` are dropped and not forwared on.  
+Using the appened records, a filter is applied to all messages.  Messages where `kubernetes_namespace_name` match the specified regex pattern `null|devnull|logging|default|kube-public|kube-service-catalog|kube-system|logging|management-infra|openshift|openshift-ansible-service-broker|openshift-infra|openshift-metrics|openshift-node` are dropped and not forwared on.
 
 ```yaml
 data:
@@ -270,38 +255,34 @@ data:
       private_key_passphrase ${KEY_PASSPHRASE}
     </source>
 
-    <filter kubernetes.**>
+    <filter **>
       @type record_transformer
       enable_ruby yes
       auto_typecast yes
       <record>
-        kubernetes_namespace_name ${record["kubernetes"]["namespace_name"].nil? ? 'devnull' : record["kubernetes"]["namespace_name"]}
+        kubernetes_namespace_name ${record["kubernetes"].nil? ? 'devnull' : record["kubernetes"]["namespace_name"].nil? ? 'devnull' : record["kubernetes"]["namespace_name"]}
         forwarded_by "#{ENV['HOSTNAME']}"
         source_component "OCP"
       </record>
     </filter>
 
     #Run filter on kube messages
-    <filter kubernetes.**>
+    <filter **>
       @type grep
       #Always filter out the restricted namespaces
-      exclude1 kubernetes_namespace_name (devnull|logging|default|openshift|openshift-infra|management-infra|kube-system|prometheus)
+      exclude1 kubernetes_namespace_name (null|devnull|logging|default|kube-public|kube-service-catalog|kube-system|logging|management-infra|openshift|openshift-ansible-service-broker|openshift-infra|openshift-metrics|openshift-node)
+
     </filter>
 
-    <match kubernetes.**>
+    <match **>
       @type ${TARGET_TYPE}
       #host ${TARGET_HOST}
       #port ${TARGET_PORT}
       ${ADDITIONAL_OPTS}
     </match>
-
-    #Toss the rest of the records.
-    <match **>
-      @type null
-    </match>
 ```
 
-All system level messages would be dropped in the example above.  To filter system messages filter on the `system.**` tag.  
+All system level messages would be dropped in the example above.  To filter system messages filter on the `system.**` tag.
 
 ```yaml
 data:
@@ -361,31 +342,6 @@ oc logs fluentd-forwarder-1-a3zdf
 ```
 
 ## Resources
-* [Secure Forwarding with Splunk](https://playbooks-rhtconsulting.rhcloud.com/playbooks/operationalizing/secure-forward-splunk.html)
+* [Secure Forwarding with Splunk](http://v1.uncontained.io/playbooks/operationalizing/secure-forward-splunk.html)
 * [Origin Fluentd Image Source](https://github.com/openshift/origin-aggregated-logging/blob/master/fluentd/Dockerfile)
 * [Fluentd Filter Plugin Overview](http://docs.fluentd.org/v0.12/articles/filter-plugin-overview)
-
-## Privacy
-This project contains only non-sensitive, publicly available data and
-information. All material and community participation is covered by the
-Surveillance Platform [Disclaimer](https://github.com/CDCgov/template/blob/master/DISCLAIMER.md)
-and [Code of Conduct](https://github.com/CDCgov/template/blob/master/code-of-conduct.md).
-For more information about CDC's privacy policy, please visit [http://www.cdc.gov/privacy.html](http://www.cdc.gov/privacy.html).
-
-## Contributing
-Anyone is encouraged to contribute to the project by [forking](https://help.github.com/articles/fork-a-repo)
-and submitting a pull request. (If you are new to GitHub, you might start with a
-[basic tutorial](https://help.github.com/articles/set-up-git).) By contributing
-to this project, you grant a world-wide, royalty-free, perpetual, irrevocable,
-non-exclusive, transferable license to all users under the terms of the
-[Apache Software License v2](http://www.apache.org/licenses/LICENSE-2.0.html) or
-later.
-
-All comments, messages, pull requests, and other submissions received through
-CDC including this GitHub page are subject to the [Presidential Records Act](http://www.archives.gov/about/laws/presidential-records.html)
-and may be archived. Learn more at [http://www.cdc.gov/other/privacy.html](http://www.cdc.gov/other/privacy.html).
-
-## Records
-This project is not a source of government records, but is a copy to increase
-collaboration and collaborative potential. All government records will be
-published through the [CDC web site](http://www.cdc.gov).
