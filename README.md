@@ -342,6 +342,6 @@ oc logs fluentd-forwarder-1-a3zdf
 ```
 
 ## Resources
-* [Secure Forwarding with Splunk](https://playbooks-rhtconsulting.rhcloud.com/playbooks/operationalizing/secure-forward-splunk.html)
+* [Secure Forwarding with Splunk](http://v1.uncontained.io/playbooks/operationalizing/secure-forward-splunk.html)
 * [Origin Fluentd Image Source](https://github.com/openshift/origin-aggregated-logging/blob/master/fluentd/Dockerfile)
 * [Fluentd Filter Plugin Overview](http://docs.fluentd.org/v0.12/articles/filter-plugin-overview)
