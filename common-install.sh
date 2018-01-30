@@ -8,6 +8,10 @@ YUM_ARGS="--setopt=tsflags=nodocs"
 yum update $YUM_ARGS -y
 
 # shared packages
+# - build tools for building gems	+# add files
+# - iproute needed for ip command to get ip addresses	+ADD run.sh fluentd.conf.template passwd.template fluentd-check.sh ${HOME}/
+# - nss_wrapper used to support username identity	+ADD common-*.sh /tmp/
+# - bc for calculations in run.conf
 PACKAGES="gcc-c++ libcurl-devel make bc gettext nss_wrapper hostname iproute"
 
 # ruby packages
@@ -52,7 +56,9 @@ gem install -N --conservative --minimal-deps --no-document \
   'fluent-plugin-remote_syslog:<1.0.0' \
   fluent-plugin-splunk-ex
 
-# set up directores
+# set up directores so that group 0 can have access like specified in
+# https://docs.openshift.com/container-platform/3.7/creating_images/guidelines.html
+# https://docs.openshift.com/container-platform/3.7/creating_images/guidelines.html#openshift-specific-guidelines
 mkdir -p /etc/fluent
 chgrp -R 0 /etc/fluent
 chmod -R g+rwX /etc/fluent
