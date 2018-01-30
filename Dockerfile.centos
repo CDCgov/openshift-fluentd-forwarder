@@ -2,8 +2,12 @@
 FROM centos:7
 
 ENV HOME=/opt/app-root/src \
-  PATH=/opt/app-root/src/bin:/opt/app-root/bin:$PATH \
-  RUBY_VERSION=2.0 \
+  PATH=/opt/rh/rh-ruby22/root/usr/bin:/opt/app-root/src/bin:/opt/app-root/bin${PATH:+:${PATH}} \
+  LD_LIBRARY_PATH=/opt/rh/rh-ruby22/root/usr/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}} \
+  MANPATH=/opt/rh/rh-ruby22/root/usr/share/man:$MANPATH \
+  PKG_CONFIG_PATH=/opt/rh/rh-ruby22/root/usr/lib64/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}} \
+  XDG_DATA_DIRS=/opt/rh/rh-ruby22/root/usr/share${XDG_DATA_DIRS:+:${XDG_DATA_DIRS}} \
+  RUBY_VERSION=2.2 \
   FLUENTD_VERSION=0.12.32 \
   GEM_HOME=/opt/app-root/src \
   DATA_VERSION=1.6.0 \
@@ -25,52 +29,17 @@ LABEL io.k8s.description="Fluentd container for collecting logs from other fluen
   name="fluentd-forwarder" \
   architecture=x86_64
 
-# build tools for building gems
-# iproute needed for ip command to get ip addresses
-# nss_wrapper used to support username identity
-# bc for calculations in run.conf
-RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
-    yum install -y epel-release && \
-    yum install -y --setopt=tsflags=nodocs \
-      gcc-c++ \
-      ruby \
-      ruby-devel \
-      libcurl-devel \
-      make \
-      bc \
-      gettext \
-      nss_wrapper \
-      hostname \
-      iproute && \
-    yum clean all
-
-# activesupport version 5.x requires ruby 2.2
-RUN mkdir -p ${HOME} && \
-    gem install -N --conservative --minimal-deps --no-document \
-      fluentd:${FLUENTD_VERSION} \
-      'activesupport:<5' \
-      fluent-plugin-kubernetes_metadata_filter \
-      fluent-plugin-rewrite-tag-filter \
-      fluent-plugin-secure-forward \
-      fluent-plugin-remote_syslog \
-      fluent-plugin-splunk-ex
-
-RUN mkdir -p /etc/fluent && \
-    chgrp -R 0 /etc/fluent && \
-    chmod -R g+rwX /etc/fluent && \
-    chgrp -R 0 ${HOME} && \
-    chmod -R g+rwX ${HOME} && \
-    chgrp -R 0 /etc/pki && \
-    chmod -R g+rwX /etc/pki && \
-    mkdir /secrets && \
-    chgrp -R 0 /secrets && \
-    chmod -R g+rwX /secrets  && \
-    chgrp -R 0 /var/log && \
-    chmod -R g+rwX /var/log   
-
-# copy configuration files
+# add files
 ADD run.sh fluentd.conf.template passwd.template fluentd-check.sh ${HOME}/
-RUN chmod g+rx ${HOME}/fluentd-check.sh
+ADD common-*.sh /tmp/
+
+# set permissions on files
+RUN chmod g+rx ${HOME}/fluentd-check.sh && \
+    chmod +x /tmp/common-*.sh
+
+# execute files and remove when done
+RUN /tmp/common-install.sh && \
+    rm -f /tmp/common-*.sh
 
 # set working dir
 WORKDIR ${HOME}
