@@ -43,6 +43,8 @@ objects:
             value: ${P_TARGET_HOST}
           - name: TARGET_PORT
             value: ${P_TARGET_PORT}
+          - name: ADDITIONAL_OPTS
+            value: ${P_ADDITIONAL_OPTS}
           - name: CA_PATH
             value: ${P_CA_PATH}
           - name: CERT_PATH
@@ -169,6 +171,9 @@ parameters:
     description: The remote port on the host that is the target for the logging data. The normal value for syslog is 514 and the normal value for splunk is 9997.
     required: true
     value: "514"
+  - name: P_ADDITIONAL_OPTS
+    description: Additional options passed to the forwarder plugin. The normal value for splunk is output_format json.
+    value: ""
   - name: P_SHARED_KEY
     description: "A key shared between the logging providers and this forwarder to ensure secure operation. Default: 'ocpaggregatedloggingsharedkey'."
     value: ocpaggregatedloggingsharedkey
