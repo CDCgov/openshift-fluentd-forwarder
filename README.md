@@ -243,11 +243,11 @@ oc delete pods -l name=fluentd-forwarder
 ```
 
 #### Filtering
-In some use cases it might be necessary to perform filtering at the external fluentd process.  This would be done to reduce the number or type of messages that are forwared.  
+In some use cases it might be necessary to perform filtering at the external fluentd process.  This would be done to reduce the number or type of messages that are forwared.
 
 Using the fluentd.conf file from above a new record will be added to the json message.  The record `kubernetes_namespace_name` will be set to the OpenShift namespace from where the messages originated.
 
-Using the appened records, a filter is applied to all messages.  Messages where `kubernetes_namespace_name` match the specified regex pattern `devnull|logging|default|openshift|openshift-infra|management-infra|kube-system|prometheus` are dropped and not forwared on.  
+Using the appened records, a filter is applied to all messages.  Messages where `kubernetes_namespace_name` match the specified regex pattern `null|devnull|logging|default|kube-public|kube-service-catalog|kube-system|logging|management-infra|openshift|openshift-ansible-service-broker|openshift-infra|openshift-metrics|openshift-node` are dropped and not forwared on.
 
 ```yaml
 data:
@@ -270,38 +270,34 @@ data:
       private_key_passphrase ${KEY_PASSPHRASE}
     </source>
 
-    <filter kubernetes.**>
+    <filter **>
       @type record_transformer
       enable_ruby yes
       auto_typecast yes
       <record>
-        kubernetes_namespace_name ${record["kubernetes"]["namespace_name"].nil? ? 'devnull' : record["kubernetes"]["namespace_name"]}
+        kubernetes_namespace_name ${record["kubernetes"].nil? ? 'devnull' : record["kubernetes"]["namespace_name"].nil? ? 'devnull' : record["kubernetes"]["namespace_name"]}
         forwarded_by "#{ENV['HOSTNAME']}"
         source_component "OCP"
       </record>
     </filter>
 
     #Run filter on kube messages
-    <filter kubernetes.**>
+    <filter **>
       @type grep
       #Always filter out the restricted namespaces
-      exclude1 kubernetes_namespace_name (devnull|logging|default|openshift|openshift-infra|management-infra|kube-system|prometheus)
+      exclude1 kubernetes_namespace_name (null|devnull|logging|default|kube-public|kube-service-catalog|kube-system|logging|management-infra|openshift|openshift-ansible-service-broker|openshift-infra|openshift-metrics|openshift-node)
+
     </filter>
 
-    <match kubernetes.**>
+    <match **>
       @type ${TARGET_TYPE}
       #host ${TARGET_HOST}
       #port ${TARGET_PORT}
       ${ADDITIONAL_OPTS}
     </match>
-
-    #Toss the rest of the records.
-    <match **>
-      @type null
-    </match>
 ```
 
-All system level messages would be dropped in the example above.  To filter system messages filter on the `system.**` tag.  
+All system level messages would be dropped in the example above.  To filter system messages filter on the `system.**` tag.
 
 ```yaml
 data:
@@ -361,7 +357,7 @@ oc logs fluentd-forwarder-1-a3zdf
 ```
 
 ## Resources
-* [Secure Forwarding with Splunk](https://playbooks-rhtconsulting.rhcloud.com/playbooks/operationalizing/secure-forward-splunk.html)
+* [Secure Forwarding with Splunk](http://v1.uncontained.io/playbooks/operationalizing/secure-forward-splunk.html)
 * [Origin Fluentd Image Source](https://github.com/openshift/origin-aggregated-logging/blob/master/fluentd/Dockerfile)
 * [Fluentd Filter Plugin Overview](http://docs.fluentd.org/v0.12/articles/filter-plugin-overview)
 
