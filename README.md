@@ -109,6 +109,18 @@ oc project logging
 oc process fluentd-forwarder-centos | oc apply -f -
 ```
 
+By default the build will disable all repositories in the base image, enabling only the ones required for installing the required packages. If you want to use the build process to use the existing repository config as is (e.g. if you're using a custom base image) then set the `USE_SYSTEM_REPOS` environment variable to any value in the BuildConfig object.
+```
+oc project logging
+oc set env bc/fluentd-forwarder USE_SYSTEM_REPOS=1
+```
+
+On CentOS:
+```
+oc project logging
+oc set env bc/fluentd-forwarder-centos USE_SYSTEM_REPOS=1
+```
+
 Build the fluentd-forwarder
 ```bash
 oc project logging
