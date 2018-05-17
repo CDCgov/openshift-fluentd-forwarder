@@ -24,7 +24,7 @@ ENV HOME=/opt/app-root/src \
 
 LABEL io.k8s.description="Fluentd container for collecting logs from other fluentd instances" \
   io.k8s.display-name="Fluentd Forwarder (${FLUENTD_VERSION})" \
-  io.openshift.expose-services="24284:tcp \
+  io.openshift.expose-services="24284:tcp" \
   io.openshift.tags="logging,fluentd,forwarder" \
   name="fluentd-forwarder" \
   architecture=x86_64
