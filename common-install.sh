@@ -4,8 +4,6 @@
 RELEASE=$(cat /etc/redhat-release)
 YUM_ARGS="--setopt=tsflags=nodocs"
 
-# ensure latest versions
-yum update $YUM_ARGS -y
 
 # shared packages
 # - build tools for building gems	+# add files
@@ -20,7 +18,11 @@ PACKAGES="${PACKAGES} rh-ruby22 rh-ruby22-rubygems rh-ruby22-ruby-devel"
 # if the release is a red hat version then we need to set additional arguments for yum repositories
 RED_HAT_MATCH='^Red Hat.*$'
 if [[ $RELEASE =~ $RED_HAT_MATCH && -z "$USE_SYSTEM_REPOS" ]]; then
-  YUM_ARGS="${YUM_ARGS} --disablerepo=\* --enablerepo=rhel-7-server-rpms --enablerepo=rhel-server-rhscl-7-rpms --enablerepo=rhel-7-server-optional-rpms"
+  #NOTE: Until the first yum command is run, /etc/yum.repos.d/redhat.repo contains no repositories, so yum-config-manager will not enable/disable anything.
+  #This command will force the population of said file, see #https://access.redhat.com/solutions/1443553
+  yum repolist --disablerepo=* && yum-config-manager --disable \* > /dev/null
+  #Set YUM_ARGS
+  YUM_ARGS="${YUM_ARGS} --enablerepo=rhel-7-server-rpms --enablerepo=rhel-server-rhscl-7-rpms --enablerepo=rhel-7-server-optional-rpms"
 fi
 
 # enable epel when on CentOS
@@ -29,6 +31,9 @@ if [[ $RELEASE =~ $CENTOS_MATCH && -z "$USE_SYSTEM_REPOS" ]]; then
   rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
   yum install -y epel-release centos-release-scl-rh
 fi
+
+# ensure latest versions
+yum update $YUM_ARGS -y
 
 # install all required packages
 yum install -y $YUM_ARGS $PACKAGES
