@@ -14,6 +14,14 @@
     * [Environment Setup](#environment-setup)
     * [Create Build Configuration](#create-build-configuration)
     * [Create Fluentd Forwarder](#create-fluentd-forwarder)
+      * [RHEL](#rhel)
+        * [RHEL Rsyslog](#rhel-rsyslog)
+        * [RHEL splunkex](#rhel-splunkex)
+        * [RHEL splunkhec](#rhel-splunkhec)
+      * [CentOS](#centos)
+        * [CentOS Rsyslog](#centos-rsyslog)
+        * [CentOS splunkex](#centos-splunkex)
+        * [CentOS splunkhec](#centos-splunkhec)
     * [Configure Fluentd Loggers](#configure-fluentd-loggers)
     * [Additional Configuration](#additional-configuration)
       * [Filtering](#filtering)
@@ -141,7 +149,11 @@ oc project logging
 oc apply -f fluentd-forwarder-template.yaml
 ```
 
-Create the new logging forwarder application deployment:
+#### RHEL
+
+##### RHEL Rsyslog
+
+Create the new rsyslog logging forwarder application deployment:
 ```bash
 oc project logging
 oc new-app fluentd-forwarder \
@@ -151,16 +163,75 @@ oc new-app fluentd-forwarder \
    -p "P_SHARED_KEY=changeme"
 ```
 
+##### RHEL splunkex
+
+To create the new splunk-ex logging forwarder application deployment:
+```bash
+oc project logging && \
+oc process -f fluentd-forwarder-template.yaml \
+   -p "P_TARGET_TYPE=splunk_ex" \
+   -p "P_TARGET_HOST=10.10.10.10" \
+   -p "P_TARGET_PORT=9997" \
+   -p "P_SHARED_KEY=changeme" \
+   -p "P_ADDITIONAL_OPTS=output_format json"
+```
+
+##### RHEL splunkhec
+
+To create the new splunkhec logging forwarder application deployment:
+```bash
+oc project logging
+oc new-app fluentd-forwarder \
+   -p P_TARGET_TYPE="splunkhec" \
+   -p P_TARGET_HOST="examplehec.example.com" \
+   -p P_TARGET_PORT="8088" \
+   -p P_SHARED_KEY="changeme" \
+   -p P_ADDITIONAL_OPTS="token <token_value>"
+```
+
+#### CentOS
+
+##### CentOS Rsyslog
+
 To do the same for CentOS you need to reference the ImageStream created by that build.
 ```bash
 oc project logging
 oc new-app fluentd-forwarder \
-   -p "P_IMAGE_NAME=fluentd-forwarder-centos"
+   -p "P_IMAGE_NAME=fluentd-forwarder-centos" \
    -p "P_TARGET_TYPE=remote_syslog" \
    -p "P_TARGET_HOST=rsyslog.internal.company.com" \
    -p "P_TARGET_PORT=514" \
    -p "P_SHARED_KEY=changeme"
 ```
+
+##### CentOS splunkex
+
+To create the new splunk-ex logging forwarder application deployment:
+```bash
+oc project logging && \
+oc process -f fluentd-forwarder-template.yaml \
+   -p "P_IMAGE_NAME=fluentd-forwarder-centos" \
+   -p "P_TARGET_TYPE=splunk_ex" \
+   -p "P_TARGET_HOST=10.10.10.10" \
+   -p "P_TARGET_PORT=9997" \
+   -p "P_SHARED_KEY=changeme" \
+   -p "P_ADDITIONAL_OPTS=output_format json"
+```
+
+##### CentOS splunkhec
+
+To create the new splunkhec logging forwarder application deployment:
+```bash
+oc project logging
+oc new-app fluentd-forwarder \
+   -p "P_IMAGE_NAME=fluentd-forwarder-centos" \
+   -p P_TARGET_TYPE="splunkhec" \
+   -p P_TARGET_HOST="examplehec.example.com" \
+   -p P_TARGET_PORT="8088" \
+   -p P_SHARED_KEY="changeme" \
+   -p P_ADDITIONAL_OPTS="token <token_value>"
+```
+
 
 A full list of parameters can be found in the [template](./fluentd-forwarder-template.yaml). Additional non-parameterized parameters and environment variables can be found in the [Dockerfile](./Dockerfile).
 

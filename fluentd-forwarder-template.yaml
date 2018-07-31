@@ -142,7 +142,7 @@ objects:
       </filter>
 
       <match **>
-        type ${TARGET_TYPE}
+        @type ${TARGET_TYPE}
         host ${TARGET_HOST}
         port ${TARGET_PORT}
         ${ADDITIONAL_OPTS}
