@@ -55,7 +55,7 @@ gem install -N --conservative --minimal-deps --no-document \
   'public_suffix:<3.0.0' \
   'fluent-plugin-record-modifier:<1.0.0' \
   'fluent-plugin-rewrite-tag-filter:<2.0.0' \
-  fluent-plugin-kubernetes_metadata_filter \
+  'fluent-plugin-kubernetes_metadata_filter:<2' \
   fluent-plugin-rewrite-tag-filter \
   fluent-plugin-secure-forward \
   'fluent-plugin-remote_syslog:<1.0.0' \
