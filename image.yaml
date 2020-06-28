@@ -1,13 +1,13 @@
 apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
-  name: ubi7
+  name: ubi8-ruby25
 spec:
   tags:
   - annotations: null
     from:
       kind: DockerImage
-      name: registry.access.redhat.com/ubi7/ubi:latest
+      name: registry.access.redhat.com/ubi8/ruby-25:latest
     importPolicy: {}
     name: latest
     referencePolicy:
