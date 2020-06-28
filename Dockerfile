@@ -18,6 +18,7 @@ ENV HOME=/opt/app-root/src \
   KEY_PASSPHRASE= \
   SHARED_KEY=ocpaggregatedloggingsharedkey
 
+USER 0
 LABEL io.k8s.description="Fluentd container for collecting logs from other fluentd instances" \
   io.k8s.display-name="Fluentd Forwarder (${FLUENTD_VERSION})" \
   io.openshift.expose-services="24284:tcp" \
@@ -34,9 +35,9 @@ RUN chmod g+rx ${HOME}/fluentd-check.sh && \
 COPY ./etc-pki-entitlement /etc/pki/entitlement
 ADD ubi.repo /etc/yum.repos.d/ubi.repo
 
-
 RUN INSTALL_PKGS="gcc-c++ libcurl-devel procps make bc gettext nss_wrapper hostname autoconf automake" && \
     DISABLE_REPOS="--disablerepo='rhel-*'" && \
+    rm /etc/rhsm-host && \
     yum repolist > /dev/null && \
     yum clean all && yum upgrade -y && yum update -y --skip-broken && \
     subscription-manager status && \
@@ -49,10 +50,9 @@ RUN INSTALL_PKGS="gcc-c++ libcurl-devel procps make bc gettext nss_wrapper hostn
 RUN /tmp/common-install.sh && \
     rm -f /tmp/common-*.sh
 
-# set working dir
-WORKDIR ${HOME}
-
 # external port
 EXPOSE 24284
-
+USER 1001
+# set working dir
+WORKDIR ${HOME}
 CMD ["sh", "run.sh"]
