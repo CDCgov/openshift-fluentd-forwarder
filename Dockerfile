@@ -40,7 +40,7 @@ RUN chmod g+rx ${HOME}/fluentd-check.sh && \
 COPY ./etc-pki-entitlement /etc/pki/entitlement
 RUN rm /etc/rhsm-host && \
     yum repolist > /dev/null && \
-    yum install -y gem gcc-c++ libcurl-devel make bc gettext nss_wrapper hostname iproute rh-ruby23 rh-ruby23-rubygems rh-ruby23-ruby-devel
+    yum install -y gem gcc-c++ libcurl-devel make bc gettext nss_wrapper hostname iproute ruby rubygems ruby-devel
 
 # execute files and remove when done
 RUN /tmp/common-install.sh && \
