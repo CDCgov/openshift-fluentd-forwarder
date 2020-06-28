@@ -42,7 +42,7 @@ ADD ubi.repo /etc/yum.repos.d/ubi.repo
 
 RUN INSTALL_PKGS="gcc-c++ libcurl-devel procps make bc gettext nss_wrapper hostname rh-ruby26 rh-ruby26-ruby-devel rh-ruby26-rubygem-rake rh-ruby26-rubygem-bundler autoconf automake" && \
     DISABLE_REPOS="--disablerepo='rhel-*'" && \
-    yum $DISABLE_REPOS install --skip-broken -y --setopt=tsflags=nodocs $INSTALL_PKGS && rpm -V $INSTALL_PKGS && \
+    yum $DISABLE_REPOS install --skip-broken --allowerasing --nobest -y --setopt=tsflags=nodocs $INSTALL_PKGS && rpm -V $INSTALL_PKGS && \
     yum $DISABLE_REPOS clean all -y && \
     rm -rf /var/cache/yum
 
