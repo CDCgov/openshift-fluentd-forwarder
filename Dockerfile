@@ -9,6 +9,7 @@ ENV HOME=/opt/app-root/src \
   XDG_DATA_DIRS=/opt/rh/rh-ruby23/root/usr/share${XDG_DATA_DIRS:+:${XDG_DATA_DIRS}} \
   RUBY_VERSION=2.5 \
   FLUENTD_VERSION=1.5.2 \
+  GEM_HOME=/opt/app-root/src \
   DATA_VERSION=1.6.0 \
   TARGET_TYPE=remote_syslog \
   TARGET_HOST=localhost \
