@@ -8,22 +8,20 @@ metadata:
 labels:
   name: fluentd-forwarder
 objects:
-- apiVersion: v1
+- apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
-    name: rhel7
-    labels:
-      app: fluentd-forwarder
+    name: ubi7-ruby25
   spec:
     tags:
-      - name: latest
-        annotations:
-          openshift.io/imported-from: registry.access.redhat.com/rhel7/rhel
-        from:
-          kind: DockerImage
-          name: registry.access.redhat.com/rhel7/rhel
-        referencePolicy:
-          type: Source
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: registry.access.redhat.com/ubi7/ruby-25:latest
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+      type: Source
 - apiVersion: v1
   kind: ImageStream
   metadata:
@@ -52,7 +50,7 @@ objects:
     output:
       to:
         kind: ImageStreamTag
-        name: '${IMAGE_NAME}:latest'
+        name: 'ubi7-ruby25:latest'
 parameters:
   - name: GIT_URI
     description: The Git URI.
