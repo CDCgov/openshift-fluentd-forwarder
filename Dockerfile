@@ -24,7 +24,7 @@ LABEL io.k8s.description="Fluentd container for collecting logs from other fluen
   io.openshift.tags="logging,fluentd,forwarder" \
   name="fluentd-forwarder" \
   architecture=x86_64
-
+USER 0
 # add files
 ADD run.sh fluentd.conf.template passwd.template fluentd-check.sh ${HOME}/
 ADD common-*.sh /tmp/
@@ -53,9 +53,10 @@ RUN /tmp/common-install.sh && \
     rm -f /tmp/common-*.sh
 
 # set working dir
-WORKDIR ${HOME}
 
 # external port
 EXPOSE 24284
 
+USER 1001
+WORKDIR ${HOME}
 CMD ["sh", "run.sh"]
