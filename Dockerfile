@@ -38,15 +38,14 @@ RUN chmod g+rx ${HOME}/fluentd-check.sh && \
     chmod +x /tmp/common-*.sh
 
 COPY ./etc-pki-entitlement /etc/pki/entitlement
-RUN rm /etc/rhsm-host && \
-    yum repolist > /dev/null && \
-    yum install -y gnupg2 curl tar gcc-c++ libcurl-devel procps make bc gettext nss_wrapper hostname iproute
+ADD ubi.repo /etc/yum.repos.d/ubi.repo
 
-RUN gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-
-RUN curl -sSL https://get.rvm.io | bash -s stable && \
-source /etc/profile.d/rvm.sh && \
-/bin/bash -l -c "rvm requirements && rvm install 2.3"
+RUN INSTALL_PKGS="gnupg2 curl tar gcc-c++ libcurl-devel procps make bc gettext nss_wrapper hostname iproute rh-ruby23 rh-ruby23-ruby-devel rh-ruby23-rubygem-rake rh-ruby23-rubygem-bundler autoconf automake" && \
+    DISABLE_REPOS=--disablerepo='rhel-*' && \
+    yum $DISABLE_REPOS install -y --setopt=tsflags=nodocs $INSTALL_PKGS && rpm -V $INSTALL_PKGS && \
+    yum remove -y origin-clients && \
+    yum $DISABLE_REPOS clean all -y && \
+    rm -rf /var/cache/yum
 
 
 # execute files and remove when done
