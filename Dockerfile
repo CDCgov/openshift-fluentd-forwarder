@@ -40,7 +40,7 @@ RUN chmod g+rx ${HOME}/fluentd-check.sh && \
 COPY ./etc-pki-entitlement /etc/pki/entitlement
 ADD ubi.repo /etc/yum.repos.d/ubi.repo
 
-RUN INSTALL_PKGS="gnupg2 curl tar gcc-c++ libcurl-devel procps make bc gettext nss_wrapper hostname iproute rh-ruby23 rh-ruby23-ruby-devel rh-ruby23-rubygem-rake rh-ruby23-rubygem-bundler autoconf automake" && \
+RUN INSTALL_PKGS="gnupg2 curl tar gcc-c++ libcurl-devel procps make bc gettext nss_wrapper hostname iproute rh-ruby26 rh-ruby26-ruby-devel rh-ruby26-rubygem-rake rh-ruby26-rubygem-bundler autoconf automake" && \
     DISABLE_REPOS=--disablerepo='rhel-*' && \
     yum $DISABLE_REPOS install -y --setopt=tsflags=nodocs $INSTALL_PKGS && rpm -V $INSTALL_PKGS && \
     yum remove -y origin-clients && \
