@@ -37,6 +37,12 @@ ADD common-*.sh /tmp/
 RUN chmod g+rx ${HOME}/fluentd-check.sh && \
     chmod +x /tmp/common-*.sh
 
+COPY ./etc-pki-entitlement /etc/pki/entitlement
+RUN rm /etc/rhsm-host && \
+    yum repolist > /dev/null && \
+    yum module enable -y gem && \
+    yum module install -y gem gcc-c++ libcurl-devel make bc gettext nss_wrapper hostname iproute rh-ruby23 rh-ruby23-rubygems rh-ruby23-ruby-devel
+
 # execute files and remove when done
 RUN /tmp/common-install.sh && \
     rm -f /tmp/common-*.sh
