@@ -28,6 +28,7 @@ LABEL io.k8s.description="Fluentd container for collecting logs from other fluen
   io.openshift.tags="logging,fluentd,forwarder" \
   name="fluentd-forwarder" \
   architecture=x86_64
+COPY ./etc-pki-entitlement /etc/pki/entitlement
 
 # add files
 ADD run.sh fluentd.conf.template passwd.template fluentd-check.sh ${HOME}/
@@ -36,15 +37,6 @@ ADD common-*.sh /tmp/
 # set permissions on files
 RUN chmod g+rx ${HOME}/fluentd-check.sh && \
     chmod +x /tmp/common-*.sh
-
-COPY ./etc-pki-entitlement /etc/pki/entitlement
-RUN rm /etc/rhsm-host && \
-    yum repolist > /dev/null && \
-    subscription-manager repos --enable rhel-server-rhscl-7-rpms && \
-    subscription-manager repos --enable rhel-7-server-rpms && \
-    subscription-manager repos --enable rhel-7-server-optional-rpms && \
-    yum clean all && yum upgrade -y && yum update -y --skip-broken && \
-    yum install --enablerepo=rhel-7-server-rpms --enablerepo=rhel-server-rhscl-7-rpms --enablerepo=rhel-7-server-optional-rpms -y --setopt=tsflags=nodocs gem gcc-c++ libcurl-devel make bc gettext nss_wrapper hostname iproute rh-ruby23 rh-ruby23-rubygems rh-ruby23-ruby-devel
 
 # execute files and remove when done
 RUN /tmp/common-install.sh && \
