@@ -39,8 +39,6 @@ RUN chmod g+rx ${HOME}/fluentd-check.sh && \
 
 COPY ./etc-pki-entitlement /etc/pki/entitlement
 RUN rm /etc/rhsm-host && \
-    subscription-manager unregister && \
-    subscription-manager clean && \
     subscription-manager register && \
     subscription-manager repos --enable rhel-7-server-rpms && \
     subscription-manager repos --enable rhel-server-rhscl-7-rpms && \
