@@ -15,9 +15,6 @@ ENV HOME=/opt/app-root/src \
   TARGET_PORT=24284 \
   IS_SECURE=yes \
   STRICT_VERIFICATION=yes \
-  CA_PATH=/etc/pki/CA/certs/ca.crt \
-  CERT_PATH=/etc/pki/tls/certs/local.crt \
-  KEY_PATH=/etc/pki/tls/private/local.key \
   KEY_PASSPHRASE= \
   SHARED_KEY=ocpaggregatedloggingsharedkey
 
@@ -27,7 +24,6 @@ LABEL io.k8s.description="Fluentd container for collecting logs from other fluen
   io.openshift.tags="logging,fluentd,forwarder" \
   name="fluentd-forwarder" \
   architecture=x86_64
-COPY ./etc-pki-entitlement /etc/pki/entitlement
 
 # add files
 ADD run.sh fluentd.conf.template passwd.template fluentd-check.sh ${HOME}/
@@ -40,8 +36,12 @@ RUN chmod g+rx ${HOME}/fluentd-check.sh && \
 COPY ./etc-pki-entitlement /etc/pki/entitlement
 ADD ubi.repo /etc/yum.repos.d/ubi.repo
 
+
 RUN INSTALL_PKGS="gcc-c++ libcurl-devel procps make bc gettext nss_wrapper hostname rh-ruby26 rh-ruby26-ruby-devel rh-ruby26-rubygem-rake rh-ruby26-rubygem-bundler autoconf automake" && \
     DISABLE_REPOS="--disablerepo='rhel-*'" && \
+    rm /etc/rhsm-host && \
+    yum repolist > /dev/null && \
+    yum clean all && yum upgrade -y && yum update -y --skip-broken && \
     yum $DISABLE_REPOS install --skip-broken --allowerasing --nobest -y --setopt=tsflags=nodocs $INSTALL_PKGS && rpm -V $INSTALL_PKGS && \
     yum $DISABLE_REPOS clean all -y && \
     rm -rf /var/cache/yum
