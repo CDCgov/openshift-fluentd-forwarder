@@ -6,7 +6,7 @@ mkdir -p ${HOME} && \
 # into openshift
 gem install -N --conservative --minimal-deps --no-document \
   'tzinfo:<1.0.0' \
-  'fluentd:1.2.6' \
+  'fluentd:1.5.2' \
   'activesupport:<5' \
   'public_suffix:<3.0.0' \
   'fluent-plugin-record-modifier:<1.0.0' \
@@ -16,7 +16,7 @@ gem install -N --conservative --minimal-deps --no-document \
   fluent-plugin-secure-forward \
   'fluent-plugin-remote_syslog:<1.0.0' \
   fluent-plugin-splunk-ex \
-  fluent-plugin-splunk-hec
+  'fluent-plugin-splunk-hec:1.1.2'
 
 # set up directores so that group 0 can have access like specified in
 # https://docs.openshift.com/container-platform/3.7/creating_images/guidelines.html
