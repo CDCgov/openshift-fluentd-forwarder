@@ -37,7 +37,6 @@ ADD ubi.repo /etc/yum.repos.d/ubi.repo
 
 RUN INSTALL_PKGS="gcc-c++ libcurl-devel procps make bc gettext nss_wrapper hostname autoconf automake" && \
     DISABLE_REPOS="--disablerepo='rhel-*'" && \
-    rm /etc/rhsm-host && \
     yum repolist > /dev/null && \
     yum clean all && yum upgrade -y && yum update -y --skip-broken && \
     subscription-manager status && \
