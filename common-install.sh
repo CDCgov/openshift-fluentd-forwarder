@@ -15,7 +15,6 @@ gem install -N --conservative --minimal-deps --no-document \
   'fluent-plugin-rewrite-tag-filter:2.2.0' \
   'fluent-plugin-secure-forward:0.4.2' \
   'fluent-plugin-remote_syslog:<1.0.0' \
-  'fluent-plugin-splunk-ex:1.0.2' \
   'fluent-plugin-splunk-hec:1.1.2'
 
 # set up directores so that group 0 can have access like specified in
