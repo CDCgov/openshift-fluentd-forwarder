@@ -39,8 +39,11 @@ RUN chmod g+rx ${HOME}/fluentd-check.sh && \
 
 COPY ./etc-pki-entitlement /etc/pki/entitlement
 RUN rm /etc/rhsm-host && \
-    yum repolist --disablerepo=* && yum-config-manager --disable \* > /dev/null && \
-    yum clean all && yum upgrade -y && yum update --enablerepo=rhel-7-server-rpms --enablerepo=rhel-server-rhscl-7-rpms --enablerepo=rhel-7-server-optional-rpms -y --skip-broken && \
+    yum repolist > /dev/null && \
+    subscription-manager repos --enable rhel-server-rhscl-7-rpms && \
+    subscription-manager repos --enable rhel-7-server-rpms && \
+    subscription-manager repos --enable rhel-7-server-optional-rpms && \
+    yum clean all && yum upgrade -y && yum update -y --skip-broken && \
     yum install --enablerepo=rhel-7-server-rpms --enablerepo=rhel-server-rhscl-7-rpms --enablerepo=rhel-7-server-optional-rpms -y --setopt=tsflags=nodocs gem gcc-c++ libcurl-devel make bc gettext nss_wrapper hostname iproute rh-ruby23 rh-ruby23-rubygems rh-ruby23-ruby-devel
 
 # execute files and remove when done
