@@ -47,9 +47,7 @@ RUN gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462
 
 RUN curl -sSL https://get.rvm.io | bash -s stable && \
 source /etc/profile.d/rvm.sh && \
-rvm requirements && \
-rvm list known && \
-rvm install 2.3.8
+RUN /bin/bash -l -c ". /etc/profile.d/rvm.sh && rvm install 2.3.3"
 
 
 
