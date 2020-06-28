@@ -9,7 +9,6 @@ ENV HOME=/opt/app-root/src \
   XDG_DATA_DIRS=/opt/rh/rh-ruby23/root/usr/share${XDG_DATA_DIRS:+:${XDG_DATA_DIRS}} \
   RUBY_VERSION=2.5 \
   FLUENTD_VERSION=1.5.2 \
-  GEM_HOME=/opt/app-root/src \
   DATA_VERSION=1.6.0 \
   TARGET_TYPE=remote_syslog \
   TARGET_HOST=localhost \
@@ -47,7 +46,7 @@ RUN gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462
 
 RUN curl -sSL https://get.rvm.io | bash -s stable && \
 source /etc/profile.d/rvm.sh && \
-/bin/bash -l -c ". /etc/profile.d/rvm.sh && rvm list known"
+/bin/bash -l -c ". /etc/profile.d/rvm.sh && rvm install 2.3.8"
 
 
 
