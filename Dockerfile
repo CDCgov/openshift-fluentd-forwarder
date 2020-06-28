@@ -38,6 +38,10 @@ ADD common-*.sh /tmp/
 RUN chmod g+rx ${HOME}/fluentd-check.sh && \
     chmod +x /tmp/common-*.sh
 
+RUN subscription-manager --enable rhel-7-server-rpms && \
+subscription-manager --enable rhel-server-rhscl-7-rpms && \
+subscription-manager --enable rhel-7-server-optional-rpms
+
 # execute files and remove when done
 RUN /tmp/common-install.sh && \
     rm -f /tmp/common-*.sh
