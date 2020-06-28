@@ -41,7 +41,17 @@ RUN chmod g+rx ${HOME}/fluentd-check.sh && \
 COPY ./etc-pki-entitlement /etc/pki/entitlement
 RUN rm /etc/rhsm-host && \
     yum repolist > /dev/null && \
-    yum install -y gnupg2 curl tar @ruby:2.5
+    yum install -y gnupg2 curl tar gcc-c++ libcurl-devel make bc gettext nss_wrapper hostname iproute
+
+RUN gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+
+RUN curl -sSL https://get.rvm.io | bash -s stable && \
+source /etc/profile.d/rvm.sh && \
+rvm requirements && \
+rvm list known && \
+rvm install 2.3.8
+
+
 
 # execute files and remove when done
 RUN /tmp/common-install.sh && \
