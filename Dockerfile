@@ -40,7 +40,6 @@ RUN INSTALL_PKGS="gcc-c++ libcurl-devel procps make bc gettext nss_wrapper hostn
     rm /etc/rhsm-host && \
     yum repolist > /dev/null && \
     yum clean all && yum upgrade -y && yum update -y --skip-broken && \
-    subscription-manager status && \
     yum $DISABLE_REPOS install -y --setopt=tsflags=nodocs $INSTALL_PKGS && rpm -V $INSTALL_PKGS && \
     yum $DISABLE_REPOS clean all -y && \
     rm -rf /var/cache/yum
