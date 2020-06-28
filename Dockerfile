@@ -41,7 +41,7 @@ COPY ./etc-pki-entitlement /etc/pki/entitlement
 RUN rm /etc/rhsm-host && \
     yum repolist > /dev/null && \
     yum clean all && yum upgrade -y && yum update -y --skip-broken && \
-    yum install -y yum-utils && \
+    yum --disablerepo=* --enablerepo=rhel-7-server-rpms install yum-utils && \
     yum-config-manager --enable rhel-7-server-rpms && \
     yum-config-manager --enable rhel-server-rhscl-7-rpms && \
     yum-config-manager --enable rhel-7-server-optional-rpms && \
