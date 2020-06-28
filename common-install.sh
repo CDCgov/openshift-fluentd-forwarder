@@ -11,11 +11,11 @@ gem install -N --conservative --minimal-deps --no-document \
   'public_suffix:<3.0.0' \
   'fluent-plugin-record-modifier:<1.0.0' \
   'fluent-plugin-rewrite-tag-filter:<2.0.0' \
-  fluent-plugin-kubernetes_metadata_filter \
-  fluent-plugin-rewrite-tag-filter \
-  fluent-plugin-secure-forward \
+  'fluent-plugin-kubernetes_metadata_filter:2.2.0' \
+  'fluent-plugin-rewrite-tag-filter:2.2.0' \
+  'fluent-plugin-secure-forward:0.4.2' \
   'fluent-plugin-remote_syslog:<1.0.0' \
-  fluent-plugin-splunk-ex \
+  'fluent-plugin-splunk-ex:1.0.2' \
   'fluent-plugin-splunk-hec:1.1.2'
 
 # set up directores so that group 0 can have access like specified in
