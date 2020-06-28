@@ -1,13 +1,13 @@
 # start based on a centos image
-FROM rhel7
+FROM ubi8
 
 ENV HOME=/opt/app-root/src \
-  PATH=/opt/rh/rh-ruby23/root/usr/bin:/opt/app-root/src/bin:/opt/app-root/bin${PATH:+:${PATH}} \
+  PATH=/opt/app-root/src/bin:/opt/app-root/bin${PATH:+:${PATH}} \
   LD_LIBRARY_PATH=/opt/rh/rh-ruby23/root/usr/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}} \
   MANPATH=/opt/rh/rh-ruby23/root/usr/share/man:$MANPATH \
   PKG_CONFIG_PATH=/opt/rh/rh-ruby23/root/usr/lib64/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}} \
   XDG_DATA_DIRS=/opt/rh/rh-ruby23/root/usr/share${XDG_DATA_DIRS:+:${XDG_DATA_DIRS}} \
-  RUBY_VERSION=2.3 \
+  RUBY_VERSION=2.5 \
   FLUENTD_VERSION=1.5.2 \
   GEM_HOME=/opt/app-root/src \
   DATA_VERSION=1.6.0 \
@@ -38,9 +38,10 @@ ADD common-*.sh /tmp/
 RUN chmod g+rx ${HOME}/fluentd-check.sh && \
     chmod +x /tmp/common-*.sh
 
-RUN subscription-manager repos --enable rhel-7-server-rpms && \
-subscription-manager repos --enable rhel-server-rhscl-7-rpms && \
-subscription-manager repos --enable rhel-7-server-optional-rpms
+COPY ./etc-pki-entitlement /etc/pki/entitlement
+RUN rm /etc/rhsm-host && \
+    yum repolist > /dev/null && \
+    yum install -y gnupg2 curl tar @ruby:2.5
 
 # execute files and remove when done
 RUN /tmp/common-install.sh && \
