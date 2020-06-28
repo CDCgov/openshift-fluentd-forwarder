@@ -6,7 +6,7 @@ mkdir -p ${HOME} && \
 # into openshift
 gem install -N --conservative --minimal-deps --no-document \
   'tzinfo:<1.0.0' \
-  fluentd:${FLUENTD_VERSION} \
+  'fluentd:1.2.6' \
   'activesupport:<5' \
   'public_suffix:<3.0.0' \
   'fluent-plugin-record-modifier:<1.0.0' \
