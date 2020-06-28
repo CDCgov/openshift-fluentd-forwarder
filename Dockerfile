@@ -41,10 +41,7 @@ COPY ./etc-pki-entitlement /etc/pki/entitlement
 RUN rm /etc/rhsm-host && \
     yum repolist > /dev/null && \
     yum clean all && yum upgrade -y && yum update -y --skip-broken && \
-    yum --disablerepo=* --enablerepo=rhel-7-server-rpms install yum-utils && \
-    yum-config-manager --enable rhel-7-server-rpms && \
-    yum-config-manager --enable rhel-server-rhscl-7-rpms && \
-    yum-config-manager --enable rhel-7-server-optional-rpms && \
+    yum install centos-release-scl && \ 
     yum install -y --setopt=tsflags=nodocs gem gcc-c++ libcurl-devel make bc gettext nss_wrapper hostname iproute rh-ruby23 rh-ruby23-rubygems rh-ruby23-ruby-devel
 
 # execute files and remove when done
