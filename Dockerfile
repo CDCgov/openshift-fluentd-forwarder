@@ -46,7 +46,8 @@ RUN gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462
 
 RUN curl -sSL https://get.rvm.io | bash -s stable && \
 source /etc/profile.d/rvm.sh && \
-/bin/bash -l -c "source /etc/profile.d/rvm.sh && rvm install ruby 2.3.8"
+/bin/bash -l -c "rvm requirements && rvm install 2.3"
+
 
 # execute files and remove when done
 RUN /tmp/common-install.sh && \
