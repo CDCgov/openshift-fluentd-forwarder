@@ -3,10 +3,10 @@ FROM ubi8
 
 ENV HOME=/opt/app-root/src \
   PATH=/opt/app-root/src/bin:/opt/app-root/bin${PATH:+:${PATH}} \
-  LD_LIBRARY_PATH=/opt/rh/rh-ruby23/root/usr/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}} \
+  LD_LIBRARY_PATH=/opt/rh/rh-ruby25/root/usr/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}} \
   MANPATH=/opt/rh/rh-ruby23/root/usr/share/man:$MANPATH \
-  PKG_CONFIG_PATH=/opt/rh/rh-ruby23/root/usr/lib64/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}} \
-  XDG_DATA_DIRS=/opt/rh/rh-ruby23/root/usr/share${XDG_DATA_DIRS:+:${XDG_DATA_DIRS}} \
+  PKG_CONFIG_PATH=/opt/rh/rh-ruby25/root/usr/lib64/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}} \
+  XDG_DATA_DIRS=/opt/rh/rh-ruby25/root/usr/share${XDG_DATA_DIRS:+:${XDG_DATA_DIRS}} \
   RUBY_VERSION=2.5 \
   FLUENTD_VERSION=1.5.2 \
   GEM_HOME=/opt/app-root/src \
