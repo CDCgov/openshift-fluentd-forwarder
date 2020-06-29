@@ -74,7 +74,7 @@ This quickstart should be run on an installation of OpenShift Enterprise V3 with
 ### Template Files
 
 * Build Configurations
-  * [RHEL](./fluentd-forwarder-build-config-template.yaml)
+  * [UBI](./fluentd-forwarder-build-config-template.yaml)
   * [CentOS](./fluentd-forwarder-centos-config-template.yaml)
 * [Application Deployment Template](./fluentd-forwarder-template.yaml)
 
@@ -93,7 +93,7 @@ The EFK stack should already be configured in the "logging" namespace.
 
 ### Create Build Configuration
 
-Choose the RHEL (default) or CentOS (-centos) flavor of build configuration. Add the build configuration template to the logging namespace.
+Choose the UBI (default) or CentOS (-centos) flavor of build configuration. Add the build configuration template to the logging namespace.
 ```bash
 oc project logging
 oc apply -f fluentd-forwarder-build-config-template.yaml
@@ -108,7 +108,7 @@ oc apply -f fluentd-forwarder-centos-build-config-template.yaml
 Process the template to create a build, using any relevant variables. In the general case the defaults are fine.
 ```bash
 oc project logging
-oc process fluentd-forwarder | oc apply -f -
+oc process fluentd-forwarder-build | oc apply -f -
 ```
 
 For CentOS process the -centos template.
@@ -132,7 +132,7 @@ oc set env bc/fluentd-forwarder-centos USE_SYSTEM_REPOS=1
 Build the fluentd-forwarder
 ```bash
 oc project logging
-oc start-build fluentd-forwarder-build
+oc start-build fluentd-forwarder
 ```
 
 To build with CentOS use the -centos build configuration.

@@ -46,11 +46,11 @@ objects:
       dockerStrategy:
         from:
           kind: ImageStreamTag
-          name: 'rhel7:latest'
+          name: 'ubi7-ruby25:latest'
     output:
       to:
         kind: ImageStreamTag
-        name: 'ubi7-ruby25:latest'
+        name: 'fluentd-forwarder:latest'
 parameters:
   - name: GIT_URI
     description: The Git URI.

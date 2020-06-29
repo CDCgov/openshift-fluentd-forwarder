@@ -1,10 +1,9 @@
-# start based on a centos image
-FROM ubi8
+FROM registry.access.redhat.com/ubi7/ruby-25:latest
 
 ENV HOME=/opt/app-root/src \
   PATH=/opt/app-root/src/bin:/opt/app-root/bin${PATH:+:${PATH}} \
   LD_LIBRARY_PATH=/opt/rh/rh-ruby25/root/usr/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}} \
-  MANPATH=/opt/rh/rh-ruby23/root/usr/share/man:$MANPATH \
+  MANPATH=/opt/rh/rh-ruby25/root/usr/share/man:$MANPATH \
   PKG_CONFIG_PATH=/opt/rh/rh-ruby25/root/usr/lib64/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}} \
   XDG_DATA_DIRS=/opt/rh/rh-ruby25/root/usr/share${XDG_DATA_DIRS:+:${XDG_DATA_DIRS}} \
   RUBY_VERSION=2.5 \
