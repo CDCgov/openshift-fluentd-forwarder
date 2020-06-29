@@ -25,6 +25,8 @@ chgrp -R 0 /etc/fluent
 chmod -R 775 /etc/fluent
 chgrp -R 0 ${HOME}
 chmod -R  775 ${HOME}
+chgrp -R 0 /opt/rh/rh-ruby25
+chmod -R 775 /opt/rh/rh-ruby25
 chgrp -R 0 /etc/pki
 chmod -R 775 /etc/pki
 mkdir /secrets
