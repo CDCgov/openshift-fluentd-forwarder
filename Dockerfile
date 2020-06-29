@@ -35,7 +35,7 @@ RUN chmod g+rx ${HOME}/fluentd-check.sh && \
 
 ADD ubi.repo /etc/yum.repos.d/ubi.repo
 
-RUN INSTALL_PKGS="net-tools gcc-c++ libcurl-devel make bc gettext nss_wrapper hostname autoconf automake" && \
+RUN INSTALL_PKGS="net-tools gcc-c++ libcurl-devel make bc gettext nss_wrapper hostname autoconf automake iproute" && \
     DISABLE_REPOS="--disablerepo='rhel-*'" && \
     rm /etc/rhsm-host && \
     yum repolist > /dev/null && \
