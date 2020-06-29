@@ -22,13 +22,13 @@ gem install -N --conservative --minimal-deps --no-document \
 # https://docs.openshift.com/container-platform/3.7/creating_images/guidelines.html#openshift-specific-guidelines
 mkdir -p /etc/fluent
 chgrp -R 0 /etc/fluent
-chmod -R  a+rwx,u-x,g-w,o-w /etc/fluent
+chmod -R 775 /etc/fluent
 chgrp -R 0 ${HOME}
-chmod -R a+rwx,u-x,g-w,o-w ${HOME}
+chmod -R  775 ${HOME}
 chgrp -R 0 /etc/pki
-chmod -R  a+rwx,u-x,g-w,o-w /etc/pki
+chmod -R 775 /etc/pki
 mkdir /secrets
 chgrp -R 0 /secrets
-chmod -R  a+rwx,u-x,g-w,o-w /secrets
+chmod -R 775 /secrets
 chgrp -R 0 /var/log
-chmod -R  a+rwx,u-x,g-w,o-w /var/log
+chmod -R 775 /var/log
